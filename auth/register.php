@@ -22,6 +22,7 @@ function generatePassword($length = 20) {
 
 $pass = generatePassword();
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -34,7 +35,7 @@ $pass = generatePassword();
 <body>
     <img class="form_image" src="Chirrup.png">
 
-    <form class="form" action="https://chirrup.ru" method="post">
+    <form class="form" action="https://chirrup.ru/auth/register.php" method="post">
 
         <h1 class="form_title">Регистрация</h1>
 
@@ -61,9 +62,43 @@ $pass = generatePassword();
         <div class="buttonContainer">
             <input class="form_button" type="submit" value="Зарегистрироваться">
             <br>
-            <input class="form_button_return" type="submit" value="Вернуться ко входу">
+            <input class="form_button_return" type="button" onclick="document.location='https://chirrup.ru/auth/auth.php'" value="Вернуться ко входу">
         </div>
     
     </form>
 </body>
 </html>
+
+
+<?php
+    $_mail = $_POST['input_text_email'];
+
+    if ($_POST['input_text_email'] != "") {
+        echo "GGGGGGGG";
+
+        $db_server = "1116079-cj39076.tmweb.ru";
+        $db_user = "chirrup_ru";
+        $db_pass = "v3ws3GnRCzveynbE";
+        $db_name = "chirrup_ru";
+        $conn = "";
+
+        $conn = mysqli_connect($db_server, $db_user, $db_pass, $db_name);
+
+        $sql = "INSERT INTO users (token, username, email, 
+                                    st_email, pass, avatar, status_or_user,
+                                    last_seen)
+                VALUES ('55555', 'Bill Cipher', '$_mail', 5, 'parolb', 
+                        'sadad', 'dead inside', 'tomorrow')";
+        
+        try {
+            mysqli_query($conn, $sql);
+            echo "))";
+        } catch (mysqli_sql_exception) {
+            echo "Error";
+        }
+
+        mysqli_close($conn);
+
+        header("Location: https://chirrup.ru/auth/auth.php");
+    }
+?>
