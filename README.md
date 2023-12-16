@@ -37,4 +37,4 @@ JavaScript ~ (немного)
 
 
 
-### *Разработчики Chirrup.ru*
+### *-- Разработчики Chirrup.ru*
