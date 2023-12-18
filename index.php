@@ -1,4 +1,3 @@
-
 <head>
 
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -74,27 +73,15 @@ textarea{
     <button class="out_button" onclick="document.location='https://chirrup.ru/auth/out.php'">Выйти</button>
 </div>
 <br><br><br>
-<?
-session_start(); 
+<?php
+session_start();
 
-var_dump($_COOKIE); 
-
-if (isset($_SESSION['login'])){
-    }
-//if ($_COOKIE['token'] == 'c6d73ec37c081fafa129ffdbf7364a3a36a9ba90f15e9612bf59d6edced4386d1a230c315025d6bf86bbc27168ee214d'){
-//        $_SESSION['login'] = 'loh';
-//    }
-else{
-        header('Location: https://chirrup.ru/auth/auth.php?warn=2');
-    }
-
-$upload_post = $_POST['comment'];
-
-if ($upload_post != null){
-    echo '<script>alert("Ваш пост успешно опубликован! (был бы, если бы мы успели доделать проект)");</script>';
+if (!isset($_SESSION['login'])) {
+    header('Location: https://chirrup.ru/auth/auth.php?warn=2');
+    exit;
 }
 
-$_SESSION['user'] = 'user1';
+$upload_post = $_POST['comment'];
 
 $dbHost = 'localhost';
 $dbName = 'chirrup_ru';
@@ -112,67 +99,69 @@ try {
                 character_set_database = 'utf8',
                 character_set_server = 'utf8'");
 
-    echo '<center><div class="post_form_adder"><form name="upload_post" method="post" action="">
+    echo '<center><div class="post_form_adder"><form name="upload_post" method="post" action="modules/add_post.php">
   <p>Добавить пост:<Br>
    <textarea name="comment" cols="40" rows="3"></textarea></p>
    
    <p>Аудио: <br><input name="browser" type="text" size="40"></p>
-   <p>Видео с YouTube: <br><input name="browser" type="text" size="40"></p>
+   <p>Видео с YouTube: <br><input name="youtube_video" type="text" size="40"></p>
 
    <p><input type="submit" value="Отправить">
    <input type="reset" value="Очистить"></p>
  </form></div></center>';
-    
-    for ($post_id = 1; $post_id <= 10; $post_id++) {
 
-    // Подготовленное выражение для получения user_id
-    $stmt = $pdo->prepare("SELECT text FROM posts WHERE id = :post_id");
-    $stmt->execute(['post_id' => $post_id]);
-    $post_text = $stmt->fetch(PDO::FETCH_ASSOC)['text'];
+    $stmt = $pdo->prepare("SELECT posts.*, users.username 
+                            FROM posts 
+                            JOIN users ON posts.user_id = users.id 
+                            ORDER BY posts.time DESC");
+    $stmt->execute();
+    $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    $stmt = $pdo->prepare("SELECT user_id FROM posts WHERE id = :post_id");
-    $stmt->execute(['post_id' => $post_id]);
-    $post_user_id = $stmt->fetch(PDO::FETCH_ASSOC)['user_id'];
+    foreach ($posts as $post) {
+        $post_text = $post['text'];
+        $post_username = $post['username'];
+        $post_time = $post['time'];
+        $post_audio = $post['audio'];
+        $post_video_yt = $post['video_yt'];
+        
+        // Преобразование даты публикации
+        $post_time = strtotime($post_time);
+        $current_time = time();
+        $time_diff = $current_time - $post_time;
+        $time_string = '';
 
-    $stmt = $pdo->prepare("SELECT username FROM users WHERE id = :post_user_id");
-    $stmt->execute(['post_user_id' => $post_user_id]);
-    $post_username = $stmt->fetch(PDO::FETCH_ASSOC)['username'];
+        if ($time_diff < 60) {
+            $time_string = 'только что';
+        } elseif ($time_diff < 3600) {
+            $time_minutes = floor($time_diff / 60);
+            $time_string = $time_minutes . ' мин. назад';
+        } elseif ($time_diff < 86400) {
+            $time_hours = floor($time_diff / 3600);
+            $time_string = $time_hours . ' ч. назад';
+        } elseif ($time_diff < 2592000) {
+            $time_days = floor($time_diff / 86400);
+            $time_string = $time_days . ' д. назад';
+        } elseif ($time_diff < 31536000) {
+            $time_months = floor($time_diff / 2592000);
+            $time_string = $time_months . ' мес. назад';
+        } else {
+            $time_years = floor($time_diff / 31536000);
+            $time_string = $time_years . ' л. назад';
+        }
 
-    $stmt = $pdo->prepare("SELECT time FROM posts WHERE id = :post_id");
-    $stmt->execute(['post_id' => $post_id]);
-    $post_time = $stmt->fetch(PDO::FETCH_ASSOC)['time'];
-
-    $stmt = $pdo->prepare("SELECT audio FROM posts WHERE id = :post_id");
-    $stmt->execute(['post_id' => $post_id]);
-    $post_audio = $stmt->fetch(PDO::FETCH_ASSOC)['audio'];
-
-    $stmt = $pdo->prepare("SELECT video_yt FROM posts WHERE id = :post_id");
-    $stmt->execute(['post_id' => $post_id]);
-    $post_video_yt = $stmt->fetch(PDO::FETCH_ASSOC)['video_yt'];
-
-    $stmt = $pdo->prepare("SELECT video_ib FROM posts WHERE id = :post_id");
-    $stmt->execute(['post_id' => $post_id]);
-    $post_video_ib = $stmt->fetch(PDO::FETCH_ASSOC)['video_ib'];
-
-
-    if ($post_text != null){
-    echo '<center><div class="post"><p>ID пользователя: '.$post_user_id.'</p>';
-    echo '<b>'.$post_text.'</b><br><br>';
-        if ($post_audio != null){
+        echo '<center><div class="post"><p>'.$post_username.'</p>';
+        echo '<b>'.$post_text.'</b><br><br>';
+        if ($post_audio != null) {
             echo '<audio style="width:100%" src="'.$post_audio.'" controls></audio><br><br>';
         }
-        if ($post_video_yt != null){
+        if ($post_video_yt != null) {
             echo $post_video_yt.'<br><br>';
         }
-        if ($post_video_ib != null){
-            echo $post_video_ib.'<br><br>';
-        }
-    echo 'Дата публикации: '.$post_time.'<br><br></div></center><br>';
-    }
+        // echo 'Дата публикации: '.$post_time.'<br><br>';
+        echo $time_string.'<br><br></div></center><br>';
     }
 
 } catch (PDOException $e) {
     echo "Ошибка выполнения запроса: " . $e->getMessage();
 }
-
 ?>
