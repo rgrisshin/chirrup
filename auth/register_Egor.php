@@ -1,7 +1,7 @@
 <?php
 function generatePassword($length = 20) {
     // Символы, которые будут использоваться в пароле
-    $chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    $chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+';
 
     // Получаем количество символов в $chars
     $charsLength = strlen($chars);
@@ -35,25 +35,12 @@ $pass = generatePassword();
 <body>
     <img class="form_image" src="Chirrup.png">
 
-    <form class="form" action="../modules/reg_module.php" method="post">
+    <form class="form" action="https://chirrup.ru/auth/register.php" method="post">
 
         <h1 class="form_title">Регистрация</h1>
-        <?php
-        if (($_GET['warn']) == ('1')){
-            echo '<p style="color:red; text-align: center;">Пароли не совпадают!</p><br>';
-        }
-
-        if (($_GET['warn']) == ('2')){
-            echo '<p style="color:red; text-align: center;">Email не соответствует требованиям!</p><br>';
-        }
-
-        if (($_GET['warn']) == ('3')){
-            echo '<p style="color:red; text-align: center;">Придумайте Ваш Ник-Нейм!</p><br>';
-        }
-        ?>
 
         <div class="form_group">
-            <input class="form_input" type="text" name="input_text_username" id="input_text_username" placeholder=" " autocomplete="off" value="">
+            <input class="form_input" type="text" name="input_text_username" id="input_text_username" placeholder=" " autocomplete="off" value="<?php echo 'user'.rand(99999999,9999999999);?>">
             <label class="form_label" for="input_text_username">Никнейм</label>
         </div>
 
@@ -63,12 +50,12 @@ $pass = generatePassword();
         </div>
 
         <div class="form_group">
-            <input class="form_input" type="text" name="input_text_password" id="input_text_password" placeholder=" " autocomplete="off" value="">
+            <input class="form_input" type="text" name="input_text_password" id="input_text_password" placeholder=" " autocomplete="off" value="<?php echo $pass; ?>">
             <label class="form_label" for="input_text_password">Пароль</label>
         </div>
 
         <div class="form_group">
-            <input class="form_input" type="password" name="input_text_password_confirm" id="input_text_password_confirm" placeholder=" " autocomplete="off" value="">
+            <input class="form_input" type="password" name="input_text_password_confirm" id="input_text_password_confirm" placeholder=" " autocomplete="off" value="<?php echo $pass; ?>">
             <label class="form_label" for="input_text_password_confirm">Подтверждение пароля</label>
         </div>
 
@@ -81,3 +68,37 @@ $pass = generatePassword();
     </form>
 </body>
 </html>
+
+
+<?php
+    $_mail = $_POST['input_text_email'];
+
+    if ($_POST['input_text_email'] != "") {
+        echo "GGGGGGGG";
+
+        $db_server = "1116079-cj39076.tmweb.ru";
+        $db_user = "chirrup_ru";
+        $db_pass = "v3ws3GnRCzveynbE";
+        $db_name = "chirrup_ru";
+        $conn = "";
+
+        $conn = mysqli_connect($db_server, $db_user, $db_pass, $db_name);
+
+        $sql = "INSERT INTO users (token, username, email, 
+                                    st_email, pass, avatar, status_or_user,
+                                    last_seen)
+                VALUES ('55555', 'Bill Cipher', '$_mail', 5, 'parolb', 
+                        'sadad', 'dead inside', 'tomorrow')";
+        
+        try {
+            mysqli_query($conn, $sql);
+            echo "))";
+        } catch (mysqli_sql_exception) {
+            echo "Error";
+        }
+
+        mysqli_close($conn);
+
+        header("Location: https://chirrup.ru/auth/auth.php");
+    }
+?>
