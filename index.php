@@ -3,6 +3,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 
 <style>
+@font-face {
+    font-family: 'Boomboom';
+    src: local('Boomboom'), url('fonts/boomboom.woff2') format('woff2'), url('fonts/boomboom.woff') format('woff'), url('fonts/boomboom.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+}
+
 a{
 color:black;
 }
@@ -20,8 +27,6 @@ position:fixed;
 height: 50px;
 font-size: 40px;
 letter-spacing: 1px;
--webkit-text-stroke-width: 0.5px;
--webkit-text-stroke-color: black;
 color: #EE82EE;
 left: 0px;
 padding-left: 10px;
@@ -58,13 +63,98 @@ align-items: center;
 position:fixed;
 top:0px;
 left:0px;
-background-color: #8A2BE2;
+background-color: #5e31ff;
 height:60px;
 width:100%;
 }
 
-textarea{
-   
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding-top: 60px; /* Учитывая фиксированный header */
+}
+
+a {
+    color: black;
+    text-decoration: none; /* Убрать подчёркивание */
+}
+
+.post {
+    display: block;
+    border: 1px solid #ddd;
+    max-width: 700px;
+    margin: auto; /* Центрирование */
+    border-radius: 10px;
+    padding: 15px;
+    background-color: white;
+    box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    overflow-x: auto;
+}
+
+.chirrup_logo {
+    font-family: 'BoomBoom', sans-serif; 
+    height: 50px;
+    font-size: 40px;
+    letter-spacing: 1px;
+    color: white;
+    background: none;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.chirrup_logo:hover {
+    color: #e6e6fa;
+}
+
+.out_button {
+    font-family: 'BoomBoom', sans-serif;
+    font-size: 19px;
+    color: white; /* Для лучшей видимости на фоне */
+    background: none;
+    border: none;
+    cursor: pointer;
+    outline: none;
+    transition: 0.3s;
+}
+
+.out_button:hover {
+    color: white;
+    border-bottom: 1px solid white;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: #5e31ff;
+    height: 60px;
+    width: 100%;
+    box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.1);
+}
+
+textarea, input[type="text"], input[type="submit"], input[type="reset"] {
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+}
+
+input[type="submit"], input[type="reset"] {
+    background-color: #5e31ff;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+input[type="submit"]:hover, input[type="reset"]:hover {
+    background-color: #3d7df7;
 }
 </style>
 </head>
